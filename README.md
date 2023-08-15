@@ -1,4 +1,4 @@
-# launch-buddy
+# LaunchBuddy
 LaunchBuddy is a tool to assist with syncing deployments, helping you discretely launch features in unison
 
 LaunchBuddy was built for [Render](https://render.com) projects that deploy from [Github](https://github.com) branches

@@ -14,8 +14,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "noUncheckedIndexedAccess": true,
-    "outDir": "./build/"
+    "noUncheckedIndexedAccess": true
   },
   "include": [
     ".eslintrc",
@@ -28,7 +27,4 @@
   "exclude": [
     "node_modules/"
   ],
-  "ts-node": {
-    "esm": true
-  }
 }
