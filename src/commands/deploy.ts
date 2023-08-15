@@ -4,7 +4,9 @@ import inquirer from 'inquirer'
 import chalk from 'chalk'
 
 import type template from '../templates/config.json'
+
 import { buildFetcher } from '../util/axios.js'
+import { logStatus } from '../util/logStatus.js'
 
 interface Arguments {
   c: string
@@ -15,37 +17,7 @@ async function deployAction ({ c: configPath }: Arguments): Promise<void> {
 
   const fetcher = buildFetcher(config.ghToken, config.renderToken)
 
-  const updates = await Promise.all(config.services.map(async (s) => {
-    const service = fetcher.render.get(`/services/${s.serviceID}`)
-      .then(({ data }) => data)
-
-    const lastDeploy = fetcher.render.get(`/services/${s.serviceID}/deploys`, {
-      params: {
-        limit: 1
-      }
-    })
-      .then(({ data: [{ deploy }] }) => deploy)
-
-    const repo: string = (await service).repo.split('/').slice(-2).join('/')
-
-    const commits = fetcher.github.get(`/repos/${repo}/commits`, {
-      params: {
-        since: (await lastDeploy).commit.createdAt,
-        sha: (await service).branch
-      }
-    })
-      .then(({ data }) => data.slice(1))
-
-    return [s, await commits]
-  }))
-
-  for (const [service, update] of updates) {
-    console.log(`${chalk.blueBright(service.name)} - ${chalk.redBright(update.length)} commits since the last deployment`)
-
-    for (const commit of update) {
-      console.log('\t', chalk.gray(commit.commit.message.split('\n')[0]))
-    }
-  }
+  await logStatus(config, fetcher)
 
   await inquirer.prompt([{
     type: 'checkbox',
