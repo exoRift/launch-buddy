@@ -7,6 +7,7 @@ import type template from '../templates/config.json'
 
 import { buildFetcher } from '../util/axios'
 import { logStatus } from '../util/logStatus'
+import { logActiveUsers } from '../util/logActiveUsers'
 
 interface Arguments {
   c: string
@@ -15,9 +16,22 @@ interface Arguments {
 async function deployAction ({ c: configPath }: Arguments): Promise<void> {
   const config: typeof template = (await import(path.resolve(process.cwd(), configPath), { assert: { type: 'json' } })).default
 
-  const fetcher = buildFetcher(config.ghToken, config.renderToken)
+  const fetcher = buildFetcher(config)
 
   await logStatus(config, fetcher)
+    .catch((err) => {
+      console.error(chalk.redBright('Something went wrong! (Incorrect/missing Render/Github token?)'))
+
+      throw err
+    })
+
+  try {
+    console.info(chalk.bold('\nActive users:'))
+
+    await logActiveUsers(fetcher)
+  } catch {
+    console.warn(chalk.gray('Could not fetch active users (missing/incorrect Clerk secret in config?)'))
+  }
 
   await inquirer.prompt([{
     type: 'checkbox',
@@ -28,8 +42,8 @@ async function deployAction ({ c: configPath }: Arguments): Promise<void> {
       value: s
     }))
   }])
-    .then(({ deploy: answers }: { deploy: (typeof config)['services'] }) => {
-      return inquirer.prompt({
+    .then(({ deploy: answers }: { deploy: (typeof config)['services'] }) =>
+      inquirer.prompt({
         type: 'confirm',
         name: 'confirm',
         message: `You will update: ${chalk.yellowBright(answers.map((s) => s.name).join(', '))}. Are you sure?`,
@@ -43,7 +57,7 @@ async function deployAction ({ c: configPath }: Arguments): Promise<void> {
             }
           } else console.log(chalk.redBright('Deployment aborted.'))
         })
-    })
+    )
 }
 
 export function mountDeploy (program: Command): void {

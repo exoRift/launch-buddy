@@ -5,29 +5,29 @@ import chalk from 'chalk'
 import type template from '../templates/config.json'
 
 import { buildFetcher } from '../util/axios'
-import { logStatus } from '../util/logStatus'
+import { logActiveUsers } from '../util/logActiveUsers'
 
 interface Arguments {
   c: string
 }
 
-async function statusAction ({ c: configPath }: Arguments): Promise<void> {
+async function userAction ({ c: configPath }: Arguments): Promise<void> {
   const config: typeof template = (await import(path.resolve(process.cwd(), configPath), { assert: { type: 'json' } })).default
 
   const fetcher = buildFetcher(config)
 
-  return await logStatus(config, fetcher)
+  return await logActiveUsers(fetcher)
     .catch((err) => {
-      console.error(chalk.redBright('Something went wrong! (incorrect/missing Render/Github token?)'))
+      console.error(chalk.redBright('Something went wrong! (incorrect/missing Clerk secret?)'))
 
       throw err
     })
 }
 
-export function mountStatus (program: Command): void {
+export function mountUsers (program: Command): void {
   program
-    .command('status')
-    .description('View the status of your services')
+    .command('users')
+    .description('See a list of users currently using your application (Requires a Clerk secret to be provided in the config)')
     .option('-c <path>', 'The path to your config.json', 'config.json')
-    .action(statusAction)
+    .action(userAction)
 }

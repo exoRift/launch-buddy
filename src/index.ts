@@ -4,6 +4,7 @@ import pkg from '../package.json'
 import { mountInit } from './commands/init'
 import { mountStatus } from './commands/status'
 import { mountDeploy } from './commands/deploy'
+import { mountUsers } from './commands/users'
 
 const program = new Command()
 
@@ -16,5 +17,6 @@ program
 mountInit(program)
 mountStatus(program)
 mountDeploy(program)
+mountUsers(program)
 
 program.parse()
