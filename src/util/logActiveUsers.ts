@@ -16,18 +16,21 @@ const timeFormat = new Intl.RelativeTimeFormat(undefined, {
 })
 
 export async function logActiveUsers (fetcher: Fetcher): Promise<void> {
-  await fetcher.clerk.get('/sessions', {
+  await Promise.all(await fetcher.clerk.get('/sessions', {
     params: {
-      status: 'active'
+      status: 'active',
+      limit: 20
     }
   })
-    .then(async ({ data }: { data: Session[] }) => {
-      for (const session of data) {
-        const user: User = (await fetcher.clerk.get(`/users/${session.user_id}`)).data
+    .then(({ data }: { data: Session[] }) => data)
+    .then((sessions) =>
+      sessions.map((session) =>
+        fetcher.clerk.get(`/users/${session.user_id}`)
+          .then(({ data: user }: { data: User }) => {
+            const timeElapsed = timeFormat.format((session.last_active_at - Date.now()) / 60000, 'minutes')
 
-        const timeElapsed = timeFormat.format((session.last_active_at - Date.now()) / 60000, 'minutes')
-
-        console.log(`${chalk.blueBright(`${user.first_name} ${user.last_name}`)} - Last active ${chalk.magentaBright(timeElapsed)}`)
-      }
-    })
+            console.log(`${chalk.blueBright(`${user.first_name} ${user.last_name}`)} - Last active ${chalk.magentaBright(timeElapsed)}`)
+          })
+      )
+    ))
 }
