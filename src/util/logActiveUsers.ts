@@ -1,5 +1,5 @@
-import { type Fetcher } from './axios'
 import chalk from 'chalk'
+import { type Fetcher } from './axios'
 
 interface Session {
   user_id: string
@@ -16,7 +16,7 @@ const timeFormat = new Intl.RelativeTimeFormat(undefined, {
 })
 
 export async function logActiveUsers (fetcher: Fetcher): Promise<void> {
-  return await fetcher.clerk.get('/sessions', {
+  await fetcher.clerk.get('/sessions', {
     params: {
       status: 'active'
     }
