@@ -1,0 +1,30 @@
+name: Quality Assurance
+
+on:
+  push:
+
+jobs:
+  lint:
+    name: Linting
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        bun: [canary]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ matrix.bun }}
+      - name: Install Dependencies
+        run: bun i
+      - name: Validate Typescript
+        uses: fersilva16/ts-report-action@1.2.1
+        with:
+          project: tsconfig.json
+      - name: Lint Code
+        run: bun lint

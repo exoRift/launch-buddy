@@ -1,0 +1,61 @@
+name: Release Package
+
+on:
+  release:
+
+jobs:
+  build:
+    name: Build Executable
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        bun: [canary]
+
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ matrix.bun }}
+      - name: Install Dependencies
+        run: bun i
+      - name: Compile
+        run: bun build
+      - name: Export Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: lb
+          path: dist/lb
+      - name: Append to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: "gh release upload ${{ github.ref }} dist/lb#lb"
+
+  publish:
+    needs: build
+
+    name: Build Executable
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        packager: [npm]
+        bun: [canary]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+        with:
+          name: lb
+      - name: Publish to NPM
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
