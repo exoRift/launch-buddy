@@ -19,4 +19,4 @@ status.mount(program)
 deploy.mount(program)
 users.mount(program)
 
-program.parse()
+await program.parseAsync()
