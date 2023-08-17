@@ -64,6 +64,6 @@ export function mountDeploy (program: Command): void {
   program
     .command('deploy')
     .description('Deploy your services')
-    .option('-c <path>', 'The path to your config.json', 'config.json')
+    .option('-c <path>', 'The path to your lbconfig.json', 'lbconfig.json')
     .action(deployAction)
 }

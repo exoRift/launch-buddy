@@ -28,6 +28,6 @@ export function mountUsers (program: Command): void {
   program
     .command('users')
     .description('See a list of users currently using your application (Requires a Clerk secret to be provided in the config)')
-    .option('-c <path>', 'The path to your config.json', 'config.json')
+    .option('-c <path>', 'The path to your lbconfig.json', 'lbconfig.json')
     .action(userAction)
 }

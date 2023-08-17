@@ -1,5 +1,5 @@
 import { Command } from 'commander'
-import pkg from '../package.json'
+import pkg from '../package.json' assert { type: 'json' }
 
 import { mountInit } from './commands/init'
 import { mountStatus } from './commands/status'

@@ -28,6 +28,6 @@ export function mountStatus (program: Command): void {
   program
     .command('status')
     .description('View the status of your services')
-    .option('-c <path>', 'The path to your config.json', 'config.json')
+    .option('-c <path>', 'The path to your lbconfig.json', 'lbconfig.json')
     .action(statusAction)
 }
