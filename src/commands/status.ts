@@ -11,7 +11,7 @@ interface Arguments {
   c: string
 }
 
-async function statusAction ({ c: configPath }: Arguments): Promise<void> {
+async function action ({ c: configPath }: Arguments): Promise<void> {
   const config: typeof template = (await import(path.resolve(process.cwd(), configPath), { assert: { type: 'json' } })).default
 
   const fetcher = buildFetcher(config)
@@ -24,10 +24,10 @@ async function statusAction ({ c: configPath }: Arguments): Promise<void> {
     })
 }
 
-export function mountStatus (program: Command): void {
+export function mount (program: Command): void {
   program
     .command('status')
     .description('View the status of your services')
     .option('-c <path>', 'The path to your lbconfig.json', 'lbconfig.json')
-    .action(statusAction)
+    .action(action)
 }

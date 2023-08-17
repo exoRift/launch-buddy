@@ -11,7 +11,7 @@ interface Arguments {
   c: string
 }
 
-async function userAction ({ c: configPath }: Arguments): Promise<void> {
+async function action ({ c: configPath }: Arguments): Promise<void> {
   const config: typeof template = (await import(path.resolve(process.cwd(), configPath), { assert: { type: 'json' } })).default
 
   const fetcher = buildFetcher(config)
@@ -24,10 +24,10 @@ async function userAction ({ c: configPath }: Arguments): Promise<void> {
     })
 }
 
-export function mountUsers (program: Command): void {
+export function mount (program: Command): void {
   program
     .command('users')
     .description('See a list of users currently using your application (Requires a Clerk secret to be provided in the config)')
     .option('-c <path>', 'The path to your lbconfig.json', 'lbconfig.json')
-    .action(userAction)
+    .action(action)
 }
