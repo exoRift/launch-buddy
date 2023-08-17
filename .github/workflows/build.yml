@@ -31,11 +31,11 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: lb
-          path: dist/lb
+          path: bin/lb
       - name: Append to Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "gh release upload ${{ github.ref }} dist/lb#lb"
+        run: "gh release upload ${{ github.ref }} bin/lb#lb"
 
   publish:
     needs: build
