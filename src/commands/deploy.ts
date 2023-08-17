@@ -6,7 +6,7 @@ import chalk from 'chalk'
 import type template from '../templates/config.json'
 
 import { buildFetcher } from '../util/axios'
-import { logStatus } from '../util/logStatus'
+import { type Service, logStatus } from '../util/logStatus'
 import { logActiveUsers } from '../util/logActiveUsers'
 
 interface Arguments {
@@ -18,7 +18,7 @@ async function action ({ c: configPath }: Arguments): Promise<void> {
 
   const fetcher = buildFetcher(config)
 
-  await logStatus(config, fetcher)
+  const statuses = await logStatus(config, fetcher)
     .catch((err) => {
       console.error(chalk.redBright('Something went wrong! (Incorrect/missing Render/Github token?)'))
 
@@ -37,12 +37,12 @@ async function action ({ c: configPath }: Arguments): Promise<void> {
     type: 'checkbox',
     name: 'deploy',
     message: 'Which services would you like to deploy?',
-    choices: config.services.map((s) => ({
+    choices: statuses.map(([s]) => ({
       name: s.name,
       value: s
     }))
   }])
-    .then(({ deploy: answers }: { deploy: (typeof config)['services'] }) =>
+    .then(({ deploy: answers }: { deploy: Service[] }) =>
       inquirer.prompt({
         type: 'confirm',
         name: 'confirm',
@@ -52,7 +52,7 @@ async function action ({ c: configPath }: Arguments): Promise<void> {
         .then(({ confirm }) => {
           if (confirm) {
             for (const answer of answers) {
-              void fetcher.render.post(`/services/${answer.serviceID}/deploys`)
+              void fetcher.render.post(`/services/${answer.id}/deploys`)
                 .then(() => console.log(chalk.greenBright(`${answer.name} deployment triggered!`)))
             }
           } else console.log(chalk.redBright('Deployment aborted.'))

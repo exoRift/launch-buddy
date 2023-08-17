@@ -3,12 +3,34 @@ import { type Fetcher } from './axios'
 
 import type template from '../templates/config.json'
 
-export async function logStatus (config: typeof template, fetcher: Fetcher): Promise<void> {
-  await Promise.all(config.services.map(async (s) => {
-    const servicePromise = fetcher.render.get(`/services/${s.serviceID}`)
+export interface Service {
+  id: string
+  name: string
+  repo: string
+  branch: string
+}
+
+export interface Deployment {
+  commit: {
+    createdAt: number
+  }
+  status: string
+}
+
+export interface Commit {
+  commit: {
+    message: string
+  }
+}
+
+export type ServiceStatus = [service: Service, deployment: Deployment, commits: Commit[]]
+
+export function logStatus (config: typeof template, fetcher: Fetcher): Promise<ServiceStatus[]> {
+  return Promise.all(config.services.map(async (s) => {
+    const servicePromise: Promise<Service> = fetcher.render.get(`/services/${s}`)
       .then(({ data }) => data)
 
-    const deploymentPromise = fetcher.render.get(`/services/${s.serviceID}/deploys`, {
+    const deploymentPromise: Promise<Deployment> = fetcher.render.get(`/services/${s}/deploys`, {
       params: {
         limit: 1
       }
@@ -18,8 +40,8 @@ export async function logStatus (config: typeof template, fetcher: Fetcher): Pro
     const service = await servicePromise
     const deployment = await deploymentPromise
 
-    const repo: string = service.repo.split('/').slice(-2).join('/')
-    const commits = await fetcher.github.get(`/repos/${repo}/commits`, {
+    const repo = service.repo.split('/').slice(-2).join('/')
+    const commits: Commit[] = await fetcher.github.get(`/repos/${repo}/commits`, {
       params: {
         since: deployment.commit.createdAt,
         sha: service.branch
@@ -38,5 +60,7 @@ export async function logStatus (config: typeof template, fetcher: Fetcher): Pro
     for (const commit of commits) {
       console.log('\t', chalk.gray(commit.commit.message.split('\n')[0]))
     }
+
+    return [service, deployment, commits]
   }))
 }

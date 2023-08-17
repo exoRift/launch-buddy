@@ -5,6 +5,19 @@ LaunchBuddy was built for [Render](https://render.com) projects that deploy from
 
 To get started, build the project with `pnpm build`. If you already have the executable, use `./lb init` to initialize your config.
 
+### Config
+```json
+{
+  "ghToken": "GITHUB API TOKEN",
+  "renderToken": "RENDER API TOKEN",
+  "clerkSecret": "CLERK USER POOL SECRET",
+  "services": [
+    "RENDER SERVICE ID",
+    ...
+  ]
+}
+```
+
 After your config is set up, use `./lb deploy` to start deploying.
 
 ## To get a Github token

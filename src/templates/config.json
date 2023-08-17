@@ -3,9 +3,6 @@
   "renderToken": "",
   "clerkSecret": "",
   "services": [
-    {
-      "name": "service",
-      "serviceID": ""
-    }
+    ""
   ]
 }
