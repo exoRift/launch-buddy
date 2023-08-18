@@ -4,8 +4,8 @@ import chalk from 'chalk'
 
 import type template from '../templates/config.json'
 
-import { buildFetcher } from '../util/axios'
-import { logActiveUsers } from '../util/logActiveUsers'
+import { buildFetcher } from '../util/axios.js'
+import { logActiveUsers } from '../util/logActiveUsers.js'
 
 interface Arguments {
   c: string
@@ -16,7 +16,7 @@ async function action ({ c: configPath }: Arguments): Promise<void> {
 
   const fetcher = buildFetcher(config)
 
-  return await logActiveUsers(fetcher)
+  await logActiveUsers(fetcher)
     .catch((err) => {
       console.error(chalk.redBright('Something went wrong! (incorrect/missing Clerk secret?)'))
 

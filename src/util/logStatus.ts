@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { type Fetcher } from './axios'
+import { type Fetcher } from './axios.js'
 
 import type template from '../templates/config.json'
 

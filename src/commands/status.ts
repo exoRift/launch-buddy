@@ -4,8 +4,8 @@ import chalk from 'chalk'
 
 import type template from '../templates/config.json'
 
-import { buildFetcher } from '../util/axios'
-import { logStatus } from '../util/logStatus'
+import { buildFetcher } from '../util/axios.js'
+import { logStatus } from '../util/logStatus.js'
 
 interface Arguments {
   c: string
@@ -16,7 +16,7 @@ async function action ({ c: configPath }: Arguments): Promise<void> {
 
   const fetcher = buildFetcher(config)
 
-  return await logStatus(config, fetcher)
+  await logStatus(config, fetcher)
     .catch((err) => {
       console.error(chalk.redBright('Something went wrong! (incorrect/missing Render/Github token?)'))
 

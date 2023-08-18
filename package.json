@@ -4,14 +4,16 @@
   "description": "LaunchBuddy is a tool to assist with syncing deployments, helping you discretely launch features in unison",
   "author": "exoRift",
   "bin": {
-    "lb": "bin/lb"
+    "lb": "bin/src/index.js"
   },
   "files": [
     "bin/"
   ],
+  "type": "module",
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile lb && mkdir -p bin && mv lb bin/lb",
+    "build": "tsc --outDir bin",
+    "buildoncebunisfixed": "bun build src/index.ts --outdir bin --target node",
     "lint": "eslint",
     "prepublishOnly": "bun run build"
   },

@@ -5,9 +5,9 @@ import chalk from 'chalk'
 
 import type template from '../templates/config.json'
 
-import { buildFetcher } from '../util/axios'
-import { type Service, logStatus } from '../util/logStatus'
-import { logActiveUsers } from '../util/logActiveUsers'
+import { buildFetcher } from '../util/axios.js'
+import { type Service, logStatus } from '../util/logStatus.js'
+import { logActiveUsers } from '../util/logActiveUsers.js'
 
 interface Arguments {
   c: string
