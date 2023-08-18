@@ -1,6 +1,6 @@
 {
   "name": "launch-buddy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "LaunchBuddy is a tool to assist with syncing deployments, helping you discretely launch features in unison",
   "author": "exoRift",
   "bin": {
