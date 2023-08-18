@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "build": "tsc --outDir bin",
+    "buildexecutable": "bun build src/index.ts --outfile lb",
     "buildoncebunisfixed": "bun build src/index.ts --outdir bin --target node",
     "lint": "eslint",
     "prepublishOnly": "bun run build"

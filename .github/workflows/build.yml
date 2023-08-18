@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         bun: [canary]
 
     runs-on: ${{ matrix.os }}
@@ -26,35 +26,29 @@ jobs:
       - name: Install Dependencies
         run: bun i
       - name: Compile
-        run: bun build
+        run: bun run buildexecutable
       - name: Export Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: lb
-          path: bin/lb
+          name: "lb-${{ runner.os }}"
+          path: lb
       - name: Append to Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: "gh release upload ${{ github.ref }} bin/lb#lb"
+        run: "gh release upload ${{ github.ref }} lb#lb-${{ runner.os }}"
 
   publish:
-    needs: build
-
-    name: Build Executable
+    name: Publish to NPM
 
     strategy:
       matrix:
         os: [ubuntu-latest]
-        packager: [npm]
         bun: [canary]
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
-        with:
-          name: lb
       - name: Publish to NPM
         uses: JS-DevTools/npm-publish@v1
         with:
